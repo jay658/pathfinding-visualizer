@@ -1,0 +1,17 @@
+*{
+  text-align: center;
+}
+
+.node{
+  height:25px;
+  width:25px;
+  border:1px solid black;
+}
+
+.isStart{
+  background-color: green;
+}
+
+.isEnd{
+  background-color: red;
+}

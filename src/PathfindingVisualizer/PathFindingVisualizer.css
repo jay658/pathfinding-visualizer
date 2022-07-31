@@ -1,0 +1,11 @@
+*{
+  text-align: center;
+}
+
+.grid{
+  margin: 100px 0 0;
+}
+
+.row{
+  display:inline-block
+}
