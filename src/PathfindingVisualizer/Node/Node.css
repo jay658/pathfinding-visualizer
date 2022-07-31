@@ -15,3 +15,11 @@
 .isEnd{
   background-color: red;
 }
+
+.isPath{
+  background-color: brown;
+}
+
+.isBlock{
+  background-color: grey;
+}
