@@ -30,5 +30,28 @@ let printName: (name:string) => void //VOID returns undefined, can use NEVER whi
 //   console.log(name)
 // }
 
+/*
+type vs interface
+type Name = {
+  a:string;
+  b:number
+}
+
+THIS IS HOW YOU COMBINE TWO TYPES, CAN ALSO COMBINE INTERFACE
+type Y = X & {
+  c:string;
+  d:number
+}
+
+interface Name {
+  name:string;
+  age?:number
+}
+
+interface Guy extends Person {
+  profession:string
+}
+*/
+
 
 export {}
