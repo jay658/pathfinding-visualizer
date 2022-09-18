@@ -1,7 +1,9 @@
 import React, {ChangeEvent, useEffect, useState} from 'react'
 import Node from './Node/Node'
 import bfs from './Algos/bfs';
+import dfs from './Algos/dfs';
 import {NodeType} from './interfaces'
+import { createNodes, animateSearch, resetPrevPath, resetNodes } from './Misc/Misc'
 
 import './PathFindingVisualizer.css'
 
@@ -9,27 +11,17 @@ const PathFindingVisualizer: React.FC = ()=>{
   const [nodes, setNodes] = useState<NodeType[][]>([]) 
   const [start, setStart] = useState<number[]>([])
   const [end, setEnd] = useState<number[]>([])
-  const [clickBox, setClickBox] = useState<string>('start')
+  const [clickBox, setClickBox] = useState('start')
   const [path, setPath] = useState<number[][]>([])
-  const [algo, setAlgo] = useState<string>('breadth first search')
+  const [algo, setAlgo] = useState('breadth first search')
+  const [visitedNodes, setVisitedNodes] = useState<number[][]>([])
 
   useEffect(()=>{
-    const myNodes:NodeType[][] = []
-
-    for(let row = 0; row < 40; row++){
-      const currentRow = []
-      for(let col = 0; col < 20; col++){
-        const currentNode:NodeType = {
-          row:row,
-          col:col,
-          isBlock:false
-        }
-        currentRow.push(currentNode)
-      }
-      myNodes.push(currentRow)
+    if(!nodes.length){
+      const myNodes = createNodes()
+      setNodes(myNodes)
     }
-    setNodes(myNodes)
-  }, [])
+  }, [nodes])
 
   const handleStart = (row:number, col:number) => {
     setStart([row, col])
@@ -42,11 +34,14 @@ const PathFindingVisualizer: React.FC = ()=>{
   const handleBarrier = (row:number, col:number) => {
     const newNodes = nodes.map(currRow =>{
       return currRow.map(node =>{
-        if(node.row === row && node.col === col) node.isBlock = !node.isBlock
+        if(node.row === row && node.col === col) {
+          node.isBlock = !node.isBlock
+          document.getElementById(`node-${row}-${col}`)!.classList.remove('node-visited', 'isShortestPath')
+        }
         return node
       })
     })
-
+    
     setNodes(newNodes)
   }
 
@@ -59,34 +54,35 @@ const PathFindingVisualizer: React.FC = ()=>{
     setAlgo(ev.target.value)
   }
 
-  const handleReset = () =>{
-    const myNodes:NodeType[][] = []
+  const handleReset = (visited:number[][] = visitedNodes, currPath:number[][]=path, newStart:number[] = [], newEnd:number[]=[], newAlgo:string = 'breadth first search', newClick ='start') =>{
+    resetPrevPath(visitedNodes, path)
+    resetNodes(nodes)
+    setStart(newStart)
+    setEnd(newEnd)
+    setAlgo(newAlgo)
+    setPath(currPath)
+    setVisitedNodes(visited)
+    setClickBox(newClick)
+  }
 
-    for(let row = 0; row < 40; row++){
-      const currentRow = []
-      for(let col = 0; col < 20; col++){
-        const currentNode:NodeType = {
-          row:row,
-          col:col,
-          isBlock:false
-        }
-        currentRow.push(currentNode)
-      }
-      myNodes.push(currentRow)
-    }
-    setNodes(myNodes)
-
-    setStart([])
-
-    setEnd([])
-
-    setAlgo('breadth first search')
+  const visualizeSearch = async () => {
+    resetPrevPath(visitedNodes, path)
+    animateSearch(visitedNodes, path, start, end)
   }
 
   useEffect(()=>{
-    if(algo === 'breadth first search') setPath(bfs(nodes, start, end)!)
-    console.log(bfs(nodes, start, end))
-  }, [algo, nodes, start, end])
+    if(end.length && algo === 'breadth first search'){
+      const [returnedPath, visited] = bfs(nodes, start, end)!
+      handleReset(visited, returnedPath, start, end, algo, clickBox)
+    }
+  }, [start, nodes])
+
+  useEffect(()=>{
+    if(start.length && algo === 'breadth first search'){
+      const [returnedPath, visited] = bfs(nodes, start, end)!
+      handleReset(visited, returnedPath, start, end, algo, clickBox)
+    }
+  }, [end, nodes])
 
   return(
     <div className='mainContainer'>
@@ -101,8 +97,8 @@ const PathFindingVisualizer: React.FC = ()=>{
         <option value='breadth first search'>BFS</option>
         <option value='depth first search'>DFS</option>
       </select>
-
-      <button onClick={handleReset}>Reset</button>
+      <button onClick={visualizeSearch}>Visualize Search</button>
+      <button onClick={()=>handleReset(visitedNodes, path)}>Reset</button>
 
       <div className='grid'>
         {nodes.map((row:NodeType[], idx)=>{
@@ -111,7 +107,7 @@ const PathFindingVisualizer: React.FC = ()=>{
               {row.map((node:NodeType, nodeIdx)=>{
                 const {row, col, isBlock} = node
                 return(
-                  <Node key={nodeIdx} start={start} end={end} handleStart={handleStart} handleEnd={handleEnd} handleBarrier={handleBarrier} row={row} col={col} isBlock={isBlock} clickBox={clickBox} path={path}/>
+                  <Node key={nodeIdx} start={start} end={end} handleStart={handleStart} handleEnd={handleEnd} handleBarrier={handleBarrier} row={row} col={col} isBlock={isBlock} clickBox={clickBox}/>
                 )
               })}
             </div>

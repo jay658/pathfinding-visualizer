@@ -11,16 +11,15 @@ interface NodeProps{
   handleStart:(row:number, col:number) => void,
   handleEnd:(row:number, col:number) => void,
   handleBarrier:(row:number, col:number) => void,
-  path:number[][],
   isBlock?:boolean
 }
 
 const Node:React.FC<NodeProps> = (props:NodeProps)=>{
-  const {handleStart, handleEnd, handleBarrier, start, end, row, col, clickBox, path, isBlock} = props
-
-  const isOnPath = path?.find(path=> path[0] === row && path[1] === col)
-  const isStart = row === start[0] && col === start[1]
-  const isEnd = row === end[0] && col === end[1]
+  const {handleStart, handleEnd, handleBarrier, start, end, row, col, clickBox, isBlock} = props
+  const[startX, startY] = start
+  const [endX, endY] = end
+  const isStart = row === startX && col === startY
+  const isEnd = row === endX && col === endY
 
   const handleClick=()=>{
     if(clickBox === 'start') handleStart(row, col)
@@ -29,7 +28,7 @@ const Node:React.FC<NodeProps> = (props:NodeProps)=>{
   }
 
   return(
-    <div className={`node ${isStart? "isStart" : ""} ${isEnd? "isEnd" : ""} ${isOnPath && !isStart && !isEnd? 'isPath' : ''} ${isBlock? 'isBlock': ''}`} onClick={handleClick}>
+    <div id={`node-${row}-${col}`} className={`node ${isStart? "isStart" : isEnd? "isEnd" : isBlock? 'isBlock': ''}`} onClick={handleClick}>
       
     </div>
   )

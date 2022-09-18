@@ -16,10 +16,14 @@
   background-color: red;
 }
 
-.isPath{
-  background-color: brown;
-}
-
 .isBlock{
   background-color: grey;
+}
+
+.node-visited{
+  background-color: aqua;
+}
+
+.isShortestPath{
+  background-color: yellow;
 }
