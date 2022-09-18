@@ -54,9 +54,9 @@ const PathFindingVisualizer: React.FC = ()=>{
     setAlgo(ev.target.value)
   }
 
-  const handleReset = (visited:number[][] = visitedNodes, currPath:number[][]=path, newStart:number[] = [], newEnd:number[]=[], newAlgo:string = 'breadth first search', newClick ='start') =>{
+  const handleReset = (visited:number[][] = visitedNodes, currPath:number[][]=path, newStart:number[] = [], newEnd:number[]=[], newAlgo:string = 'breadth first search', newClick ='start', resetBlocks:boolean = true) =>{
     resetPrevPath(visitedNodes, path)
-    resetNodes(nodes)
+    resetNodes(nodes, resetBlocks)
     setStart(newStart)
     setEnd(newEnd)
     setAlgo(newAlgo)
@@ -73,14 +73,14 @@ const PathFindingVisualizer: React.FC = ()=>{
   useEffect(()=>{
     if(end.length && algo === 'breadth first search'){
       const [returnedPath, visited] = bfs(nodes, start, end)!
-      handleReset(visited, returnedPath, start, end, algo, clickBox)
+      handleReset(visited, returnedPath, start, end, algo, clickBox, false)
     }
   }, [start, nodes])
 
   useEffect(()=>{
     if(start.length && algo === 'breadth first search'){
       const [returnedPath, visited] = bfs(nodes, start, end)!
-      handleReset(visited, returnedPath, start, end, algo, clickBox)
+      handleReset(visited, returnedPath, start, end, algo, clickBox, false)
     }
   }, [end, nodes])
 

@@ -19,10 +19,11 @@ const createNodes = ()=>{
   return myNodes
 }
 
-const resetNodes = (nodes:NodeType[][]) => {
+const resetNodes = (nodes:NodeType[][], resetBlocks = false) => {
   for(let i = 0; i < nodes.length; i++){
     for(let j = 0; j < nodes[0].length; j++){
       document.getElementById(`node-${i}-${j}`)!.classList.remove('node-visited', 'isShortestPath')
+      if(resetBlocks) nodes[i][j].isBlock = false
     }
   }
 }
